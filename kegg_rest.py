@@ -2,7 +2,7 @@
 
 import io
 import os
-import sys, getopt
+import sys, argparse
 import pandas as pd
 
 from Bio import SeqIO
@@ -36,23 +36,23 @@ def PDF(filename):
 def to_df(result):
     return pd.read_table(io.StringIO(result), header=None)
 
-def script_usage()
+def script_usage():
     print 'kegg_rest.py arguments:'
     print 'Version:'
     print '-v | --version returns statistics for KEGG database'
     print 'Database Info:'
-    print '-i | --info returns info for a given Kegg <database>'
+    print '-i | --info returns info for a given Kegg <database/dbentries>'
     print 'usage example: kegg_rest.py --info <pathwayID | speciesID | etc >'
     print 'Retrieve List:'
     print '-l | --list returns a <database> list for a given -s | --species <speciesID> '
     print 'usage example: kegg_rest.py --list <database; eg. "pathwayID"> --species <speciesID; optional>'
     print 'Search database:'
-    print 'At -d | --db <database> search -f | --find <query> with -o | --option <search parameters>'
-    print 'usage example: kegg_rest.py --db <database; eg. pathway> --find <query; eg. "Repair"> --option <parameters; optional; eg. mol_weight <= n>'
+    print 'At -d | --db <database> search -q | --query <query> with -o | --option <search parameters>'
+    print 'usage example: kegg_rest.py --db <database; eg. pathway> --query <query; eg. "Repair"> --option <parameters; optional; eg. mol_weight <= n>'
     print 'Retrieve data:'
-    print '-r | --retrieve data for a given keggID <dbentries> and -o | --options <optional; eg. "aaseq", "ntseq", "mol", "kcf", "image", "kgml"> '
+    print '-r | --retrieve data for a given keggID <dbentries> and -f | --format <optional; eg. "aaseq", "ntseq", "mol", "kcf", "image", "kgml"> '
     print 'usage example: kegg_rest.py --retrieve <pathwayID>'
-    print 'usage example: kegg_rest.py --retrieve <pathwayID> --options <"image">'
+    print 'usage example: kegg_rest.py --retrieve <pathwayID> --format <"image">'
     print '-g | --genes returns parsed list of genes for a Kegg pathway'
     print 'usage example: kegg_rest.py --retrieve <pathwayID> --genes'
     print 'Convert Identifiers:'
@@ -65,72 +65,52 @@ def script_usage()
     print 'usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <database; eg. enzyme>'
     print 'usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <dbentries; eg. ec:1.1.1.1>'
 
-def keggInfo(database)
+def keggInfo(database):
     kegg_info = REST.kegg_info(database).read()
     print(kegg_info)
 
-def keggList(database,species)
+def keggList(database,species):
     kegg_list = REST.kegg_list(database, species).read()
     print(kegg_list)
 
-def keggSearch(database,query,option)
+def keggSearch(database,query,option):
     kegg_search = REST.kegg_find(database, query, options).read()
     print(kegg_search)
 
-def keggGetData(dbentries,option)
+def keggGetData(dbentries,option):
     kegg_getdata = REST.kegg_get(dbentries,option).read()
     print(kegg_getdata)
     return(kegg_getdata)
 
-def keggConvert(targetdb,sourcedb)
+def keggConvert(targetdb,sourcedb):
     kegg_convert = REST.kegg_conv(targetdb,sourcedb).read()
     print(kegg_convert)
 
-def keggLink(targetdb,sourcedb)
+def keggLink(targetdb,sourcedb):
     kegg_link = REST.kegg_link(targetdb,sourcedb).read()
     print(kegg_link)
 
-def parsePathway(pathway)
+def parsePathway(pathway):
     print("Genes for -> {0:s}, {1:s}".format(pathway,pathwayName))
 
-def keggPathwayGenes(dbentries)
+def keggPathwayGenes(dbentries):
     kegg_pathway = keggGetData(dbentries)
     gene_list = parsePathway(kegg_pathway)
 
 
-
-def main(argv):
-    species = ''
-    pathway = ''
-    try:
-        opts, args = getopt.getopt(argv,"hvls:p:",["sspecies=","ppathway="])
-    except getopt.GetoptError:
-        script_usage()
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            script_usage()
-            sys.exit()
-        elif opt in ("-s", "--sspecies"):
-             species = arg
-        elif opt in ("-p", "--ppathway"):
-             pathway = arg
-
-
-
-
-crassostera_info = REST.kegg_info("crg").read()
-print(crassostera_info)
-
-
-
-#path:crg03410   Base excision repair - Crassostrea gigas (Pacific oyster)
-#path:crg03420   Nucleotide excision repair - Crassostrea gigas (Pacific oyster)
-#path:crg03430   Mismatch repair - Crassostrea gigas (Pacific oyster)
-#path:crg03440   Homologous recombination - Crassostrea gigas (Pacific oyster)
-#path:crg03450   Non-homologous end-joining - Crassostrea gigas (Pacific oyster)
-
-
-path_crg03410 = REST.kegg_get("crg03410").read()
-print("Genes for -> Base excision repair - Crassostrea gigas (Pacific oyster)")
-print(path_crg03410)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--version', action='store_true')
+    parser.add_argument('-i', '--info', help='returns info for a given <database/dbentries>')
+    parser.add_argument('-l', '--list', help='obtain a list of entry identifiers and associated definition <database/dbentries>; --species is optional')
+    parser.add_argument('-s', '--species', help='narrows a list by organism/species <kegg speciesID>; optional')
+    parser.add_argument('-d', '--db', help='find entries in database <db>', choices=['pathway', 'brite', 'module', 'ko', 'genome', 'genes', '<org>', 'vg', 'ag','ligand', 'compound', 'glycan', 'reaction', 'rclass', 'enzyme', 'network', 'variant','disease','drug','dgroup', 'environ','<medicus>'])
+    parser.add_argument('-q', '--query', help='find entries with matching query <keyword> or other <query data>')
+    parser.add_argument('-o', '--option', help='for compound and drug db, option narrows search by <formula | exact_mass | mol_weight | nop>')
+    parser.add_argument('-r', '--retrieve', help='retrieve given database entries <database/dbentries>; --genes and --format are optional')
+    parser.add_argument('-g', '--genes', action='store_true', help='parse genes from a given pathway; requires --retrieve')
+    parser.add_argument('-f', '--format', choices=["aaseq", "ntseq", "mol", "kcf", "image", "kgml"])
+    parser.add_argument('-c', '--convert', help='convert KEGG identifiers to/from outside identifiers <db/dbentries>; kegg db = <org> OR <keggID>; outside db = ncbi-geneid | ncbi-proteinid | uniprot')
+    parser.add_argument('-t', '--targetdb', help='target database <database>; use with --convert OR --xreference')
+    parser.add_argument('-x', '--xreference', help='find related entries by using database cross-references <sourcedb/dbentries>')
+    args = parser.parse_args()
