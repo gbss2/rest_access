@@ -63,7 +63,7 @@ def script_usage():
     print('\n Find related entries by dbs cross-references:')
     print('-t | --targetdb <database> -x | --xreference <database | dbentries>')
     print('usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <database; eg. enzyme>')
-    print('usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <dbentries; eg. ec:1.1.1.1>')
+    print('usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <dbentries; eg. ec:1.1.1.1> \n\n')
 
 def keggInfo(database):
     kegg_info = REST.kegg_info(database).read()
