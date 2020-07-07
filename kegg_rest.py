@@ -114,6 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--targetdb', help='target database <database>; use with --convert OR --xreference')
     parser.add_argument('-x', '--xreference', help='find related entries by using database cross-references <sourcedb/dbentries>')
     if len(sys.argv)==1:
-        parser.script_usage(sys.stderr)
+        script_usage()
+        parser.print_help(sys.stderr)
         sys.exit(1)
     args = parser.parse_args()
