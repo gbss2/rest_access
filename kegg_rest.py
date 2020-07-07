@@ -51,7 +51,7 @@ def script_usage():
     print('usage example: kegg_rest.py --db <database; eg. pathway> --query <query; eg. "Repair"> --option <parameters; optional; eg. mol_weight <= n>')
     print('\n Retrieve data:')
     print('-r | --retrieve data for a given keggID <dbentries> and -f | --format <optional; eg. "aaseq", "ntseq", "mol", "kcf", "image", "kgml"> ')
-    print('usage example: kegg_rest.py --retrieve <pathwayID>') 
+    print('usage example: kegg_rest.py --retrieve <pathwayID>')
     print('usage example: kegg_rest.py --retrieve <pathwayID> --format <"image">')
     print('-g | --genes returns parsed list of genes for a Kegg pathway')
     print('usage example: kegg_rest.py --retrieve <pathwayID> --genes')
@@ -113,4 +113,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--convert', help='convert KEGG identifiers to/from outside identifiers <db/dbentries>; kegg db = <org> OR <keggID>; outside db = ncbi-geneid | ncbi-proteinid | uniprot')
     parser.add_argument('-t', '--targetdb', help='target database <database>; use with --convert OR --xreference')
     parser.add_argument('-x', '--xreference', help='find related entries by using database cross-references <sourcedb/dbentries>')
+    if len(sys.argv)==1:
+        parser.script_usage(sys.stderr)
+        sys.exit(1)
     args = parser.parse_args()
