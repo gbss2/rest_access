@@ -77,8 +77,8 @@ def keggSearch(database,query,option):
     kegg_search = REST.kegg_find(database, query, options).read()
     print(kegg_search)
 
-def keggGetData(dbentries,option):
-    kegg_getdata = REST.kegg_get(dbentries,option).read()
+def keggGetData(dbentries,format):
+    kegg_getdata = REST.kegg_get(dbentries,format).read()
     print(kegg_getdata)
     return(kegg_getdata)
 
@@ -93,23 +93,22 @@ def keggLink(targetdb,sourcedb):
 def parsePathway(pathway):
     print("Genes for -> {0:s}, {1:s}".format(pathway,pathwayName))
 
-def keggPathwayGenes(dbentries):
-    kegg_pathway = keggGetData(dbentries)
+def keggPathwayGenes(kegg_pathway):
     gene_list = parsePathway(kegg_pathway)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--version', action='store_true')
+    parser.add_argument('-v', '--version', help='returns KEGG version', action='store_true')
     parser.add_argument('-i', '--info', help='returns info for a given <database/dbentries>')
     parser.add_argument('-l', '--list', help='obtain a list of entry identifiers and associated definition <database/dbentries>; --species is optional')
-    parser.add_argument('-s', '--species', help='narrows a list by organism/species <kegg speciesID>; optional')
+    parser.add_argument('-s', '--species', help='narrows a list by organism/species <kegg speciesID>; optional', default="NULL")
     parser.add_argument('-d', '--db', help='find entries in database <db>', choices=['pathway', 'brite', 'module', 'ko', 'genome', 'genes', '<org>', 'vg', 'ag','ligand', 'compound', 'glycan', 'reaction', 'rclass', 'enzyme', 'network', 'variant','disease','drug','dgroup', 'environ','<medicus>'])
     parser.add_argument('-q', '--query', help='find entries with matching query <keyword> or other <query data>')
-    parser.add_argument('-o', '--option', help='for compound and drug db, option narrows search by <formula | exact_mass | mol_weight | nop>')
+    parser.add_argument('-o', '--option', help='for compound and drug db, option narrows search by <formula | exact_mass | mol_weight | nop>', default="NULL")
     parser.add_argument('-r', '--retrieve', help='retrieve given database entries <database/dbentries>; --genes and --format are optional')
     parser.add_argument('-g', '--genes', action='store_true', help='parse genes from a given pathway; requires --retrieve')
-    parser.add_argument('-f', '--format', choices=["aaseq", "ntseq", "mol", "kcf", "image", "kgml"])
+    parser.add_argument('-f', '--format', choices=["aaseq", "ntseq", "mol", "kcf", "image", "kgml"], default="NULL")
     parser.add_argument('-c', '--convert', help='convert KEGG identifiers to/from outside identifiers <db/dbentries>; kegg db = <org> OR <keggID>; outside db = ncbi-geneid | ncbi-proteinid | uniprot')
     parser.add_argument('-t', '--targetdb', help='target database <database>; use with --convert OR --xreference')
     parser.add_argument('-x', '--xreference', help='find related entries by using database cross-references <sourcedb/dbentries>')
@@ -118,3 +117,22 @@ if __name__ == '__main__':
         parser.print_help(sys.stderr)
         sys.exit(1)
     args = parser.parse_args()
+    if args.version:
+        keggInfo("kegg")
+    elif args.info:
+        keggInfo(args.info)
+    elif args.list and args.species:
+        keggList(args.list,args.species)
+    elif args.db and args.query and args.option:
+        keggSearch(args.db,args.query,args.option)
+    elif args.retrieve and args.format:
+        keggGetData(args.retrieve,args.format)
+    elif args.convert and args.targetdb:
+        keggConvert(args.targetdb,args.convert)
+    elif args.targetdb and args.xreference:
+        keggLink(args.targetdb,args.xreference)
+    elif args.retrieve and args.format and args.genes:
+        pathway = keggGetData(args.retrieve,args.format)
+        keggPathwayGenes(pathway)
+    else
+        script_usage()
