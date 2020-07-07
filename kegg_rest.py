@@ -37,33 +37,33 @@ def to_df(result):
     return pd.read_table(io.StringIO(result), header=None)
 
 def script_usage():
-    print 'kegg_rest.py arguments:'
-    print 'Version:'
-    print '-v | --version returns statistics for KEGG database'
-    print 'Database Info:'
-    print '-i | --info returns info for a given Kegg <database/dbentries>'
-    print 'usage example: kegg_rest.py --info <pathwayID | speciesID | etc >'
-    print 'Retrieve List:'
-    print '-l | --list returns a <database> list for a given -s | --species <speciesID> '
-    print 'usage example: kegg_rest.py --list <database; eg. "pathwayID"> --species <speciesID; optional>'
-    print 'Search database:'
-    print 'At -d | --db <database> search -q | --query <query> with -o | --option <search parameters>'
-    print 'usage example: kegg_rest.py --db <database; eg. pathway> --query <query; eg. "Repair"> --option <parameters; optional; eg. mol_weight <= n>'
-    print 'Retrieve data:'
-    print '-r | --retrieve data for a given keggID <dbentries> and -f | --format <optional; eg. "aaseq", "ntseq", "mol", "kcf", "image", "kgml"> '
-    print 'usage example: kegg_rest.py --retrieve <pathwayID>'
-    print 'usage example: kegg_rest.py --retrieve <pathwayID> --format <"image">'
-    print '-g | --genes returns parsed list of genes for a Kegg pathway'
-    print 'usage example: kegg_rest.py --retrieve <pathwayID> --genes'
-    print 'Convert Identifiers:'
-    print '-c | --convert <IDs; database> from/to -t | --targetdb <database>'
-    print 'For genes <IDs = organism or dbentries for KEGG> AND <ncbi-geneid | ncbi-proteinid | uniprot for outside dbs>'
-    print 'usage example: kegg_rest.py --convert "crg" --targetdb "uniprot"'
-    print 'usage example: kegg_rest.py --convert "K1PNA0" --targetdb "uniprot"'
-    print 'Find related entries by dbs cross-references:'
-    print '-t | --targetdb <database> -x | --xreference <database | dbentries>'
-    print 'usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <database; eg. enzyme>'
-    print 'usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <dbentries; eg. ec:1.1.1.1>'
+    print('kegg_rest.py arguments:')
+    print('\n Version:')
+    print('-v | --version returns statistics for KEGG database')
+    print('\n Database Info:')
+    print('-i | --info returns info for a given Kegg <database/dbentries>')
+    print('usage example: kegg_rest.py --info <pathwayID | speciesID | etc >')
+    print('\n Retrieve List:')
+    print('-l | --list returns a <database> list for a given -s | --species <speciesID> ')
+    print('usage example: kegg_rest.py --list <database; eg. "pathwayID"> --species <speciesID; optional>')
+    print('\n Search database:')
+    print('At -d | --db <database> search -q | --query <query> with -o | --option <search parameters>')
+    print('usage example: kegg_rest.py --db <database; eg. pathway> --query <query; eg. "Repair"> --option <parameters; optional; eg. mol_weight <= n>')
+    print('\n Retrieve data:')
+    print('-r | --retrieve data for a given keggID <dbentries> and -f | --format <optional; eg. "aaseq", "ntseq", "mol", "kcf", "image", "kgml"> ')
+    print('usage example: kegg_rest.py --retrieve <pathwayID>') 
+    print('usage example: kegg_rest.py --retrieve <pathwayID> --format <"image">')
+    print('-g | --genes returns parsed list of genes for a Kegg pathway')
+    print('usage example: kegg_rest.py --retrieve <pathwayID> --genes')
+    print('\n Convert Identifiers:')
+    print('-c | --convert <IDs; database> from/to -t | --targetdb <database>')
+    print('For genes <IDs = organism or dbentries for KEGG> AND <ncbi-geneid | ncbi-proteinid | uniprot for outside dbs>')
+    print('usage example: kegg_rest.py --convert "crg" --targetdb "uniprot"')
+    print('usage example: kegg_rest.py --convert "K1PNA0" --targetdb "uniprot"')
+    print('\n Find related entries by dbs cross-references:')
+    print('-t | --targetdb <database> -x | --xreference <database | dbentries>')
+    print('usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <database; eg. enzyme>')
+    print('usage example: kegg_rest.py --targetdb <database; eg. pathway> --xreference <dbentries; eg. ec:1.1.1.1>')
 
 def keggInfo(database):
     kegg_info = REST.kegg_info(database).read()
