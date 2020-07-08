@@ -134,5 +134,5 @@ if __name__ == '__main__':
     elif args.retrieve and args.format and args.genes:
         pathway = keggGetData(args.retrieve,args.format)
         keggPathwayGenes(pathway)
-    else
+    else:
         script_usage()
